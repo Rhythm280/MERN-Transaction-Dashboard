@@ -15,16 +15,16 @@ const BarChart = ({ chartData }) => {
         }
 
         if (chartData && chartData.length > 0) {
-            const labels = chartData.map((range) => `${range._id[0]}-${range._id[1]}`);
+            const labels = chartData.map((range) => `<span class="math-inline">\{range\.\_id\[0\]\}\-</span>{range._id[1]}`);
             const data = chartData.map((range) => range.count);
 
-            const chartInstance = new ChartJS(chartRef.current, {
+            new ChartJS(chartRef.current, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [
                         {
-                            label: 'Number of Items',
+                            label: 'Number of Transactions',
                             data: data,
                             backgroundColor: 'rgba(75, 192, 192, 0.6)',
                         },
@@ -33,10 +33,10 @@ const BarChart = ({ chartData }) => {
                 options: {
                     scales: {
                         x: {
-                            type: 'category', // Use CategoryScale for labels
+                            type: 'category',
                         },
                         y: {
-                            type: 'linear', // Use LinearScale for the y-axis (if needed)
+                            type: 'linear',
                         },
                     },
                 },

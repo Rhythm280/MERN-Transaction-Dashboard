@@ -1,9 +1,14 @@
 import React from 'react';
 
-const TransactionsTable = ({ transactions, currentPage, totalPages, totalCount, onPageChange }) => {
+const TransactionsTable = ({
+    transactions,
+    currentPage,
+    totalPages,
+    totalCount,
+    onPageChange
+}) => {
     return (
         <div>
-            <h2>Transactions</h2>
             <table>
                 <thead>
                     <tr>
@@ -11,6 +16,7 @@ const TransactionsTable = ({ transactions, currentPage, totalPages, totalCount, 
                         <th>Description</th>
                         <th>Price</th>
                         <th>Date of Sale</th>
+                        <th>Category</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -20,14 +26,19 @@ const TransactionsTable = ({ transactions, currentPage, totalPages, totalCount, 
                             <td>{transaction.description}</td>
                             <td>${transaction.price}</td>
                             <td>{new Date(transaction.dateOfSale).toLocaleDateString()}</td>
+                            <td>{transaction.category}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
             <div className="pagination">
-                <button onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}>Previous</button>
+                <button onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}>
+                    Previous
+                </button>
                 <span>{currentPage} of {totalPages}</span>
-                <button onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}>Next</button>
+                <button onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+                    Next
+                </button>
             </div>
             <p>Total Transactions: {totalCount}</p>
         </div>
