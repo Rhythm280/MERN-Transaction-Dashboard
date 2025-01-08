@@ -1,110 +1,90 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import TransactionsTable from './components/TransactionsTable';
 import Statistics from './components/Statistics';
 import BarChart from './components/BarChart';
-import PieChart from './components/PieChart';
-import './styles/App.css';
+import api from './services/api';
 
 function App() {
   const [transactions, setTransactions] = useState([]);
   const [statistics, setStatistics] = useState({});
   const [barChartData, setBarChartData] = useState([]);
-  const [pieChartData, setPieChartData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [search, setSearch] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState(3); // Default to March
-
-  const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-  ];
+  const [selectedMonth, setSelectedMonth] = useState(3); // Default to March (3)
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchTransactions = async () => {
       try {
-        const response = await axios.get(`/transactions?month=${selectedMonth}&search=${search}&page=${currentPage}`);
+        const response = await api.getTransactions({
+          month: selectedMonth,
+          page: currentPage,
+          search: searchQuery,
+        });
         setTransactions(response.data.transactions);
-        setCurrentPage(response.data.currentPage);
-        setTotalPages(response.data.totalPages);
+        setCurrentPage(response.data.pagination.page);
+        setTotalPages(response.data.pagination.totalPages);
         setTotalCount(response.data.totalCount);
       } catch (error) {
         console.error('Error fetching transactions:', error);
       }
     };
 
-    fetchData();
-  }, [selectedMonth, search, currentPage]);
-
-  useEffect(() => {
     const fetchStatistics = async () => {
       try {
-        const response = await axios.get(`/statistics?month=${selectedMonth}`);
+        const response = await api.getStatistics({ month: selectedMonth });
         setStatistics(response.data);
       } catch (error) {
         console.error('Error fetching statistics:', error);
       }
     };
 
-    fetchStatistics();
-  }, [selectedMonth]);
-
-  useEffect(() => {
-    const fetchBarChart = async () => {
+    const fetchBarChartData = async () => {
       try {
-        const response = await axios.get(`/bar-chart?month=${selectedMonth}`);
+        const response = await api.getBarChartData({ month: selectedMonth });
         setBarChartData(response.data);
       } catch (error) {
         console.error('Error fetching bar chart data:', error);
       }
     };
 
-    fetchBarChart();
-  }, [selectedMonth]);
-
-  useEffect(() => {
-    const fetchPieChart = async () => {
-      try {
-        const response = await axios.get(`/pie-chart?month=${selectedMonth}`);
-        setPieChartData(response.data);
-      } catch (error) {
-        console.error('Error fetching pie chart data:', error);
-      }
-    };
-
-    fetchPieChart();
-  }, [selectedMonth]);
+    fetchTransactions();
+    fetchStatistics();
+    fetchBarChartData();
+  }, [selectedMonth, currentPage, searchQuery]);
 
   const handleMonthChange = (event) => {
     setSelectedMonth(parseInt(event.target.value));
-  };
-
-  const handleSearchChange = (event) => {
-    setSearch(event.target.value);
   };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
   return (
-    <div className="container">
-      <h1>MERN Stack Challenge</h1>
-      <div className="row">
-        <div className="col-md-6">
-          <select value={selectedMonth} onChange={handleMonthChange}>
-            {months.map((month, index) => (
-              <option key={index} value={index + 1}>
-                {month}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="col-md-6">
-          <input type="text" value={search} onChange={handleSearchChange} placeholder="Search..." />
-        </div>
+    <div className="App">
+      <h1>Transaction Dashboard</h1>
+      <div>
+        <label htmlFor="monthSelect">Select Month:</label>
+        <select id="monthSelect" value={selectedMonth} onChange={handleMonthChange}>
+          <option value={1}>January</option>
+          <option value={2}>February</option>
+          <option value={3}>March</option>
+          {/* ... other months */}
+        </select>
+      </div>
+      <div>
+        <input 
+          type="text" 
+          placeholder="Search Transactions" 
+          value={searchQuery} 
+          onChange={handleSearchChange} 
+        />
       </div>
       <TransactionsTable 
         transactions={transactions} 
@@ -114,8 +94,7 @@ function App() {
         onPageChange={handlePageChange} 
       />
       <Statistics statistics={statistics} />
-      <BarChart chartData={barChartData} />
-      <PieChart chartData={pieChartData} />
+      <BarChart chartData={barChartData} /> 
     </div>
   );
 }
