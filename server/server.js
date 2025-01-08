@@ -7,10 +7,83 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 5000;
 
+const dummyTransactions = [
+    {
+        title: "Laptop",
+        description: "High-performance gaming laptop",
+        price: 1500,
+        dateOfSale: new Date("2024-07-05"),
+        category: "Electronics"
+    },
+    {
+        title: "Running Shoes",
+        description: "Comfortable running shoes for daily jogs",
+        price: 80,
+        dateOfSale: new Date("2024-07-10"),
+        category: "Sports"
+    },
+    {
+        title: "Coffee Maker",
+        description: "Automatic drip coffee maker",
+        price: 60,
+        dateOfSale: new Date("2024-07-15"),
+        category: "Home Appliances"
+    },
+    {
+        title: "Book: The Lord of the Rings",
+        description: "Classic fantasy novel",
+        price: 25,
+        dateOfSale: new Date("2024-07-20"),
+        category: "Books"
+    },
+    {
+        title: "Sunglasses",
+        description: "Stylish sunglasses with UV protection",
+        price: 40,
+        dateOfSale: new Date("2024-07-25"),
+        category: "Accessories"
+    },
+    {
+        title: "Organic Vegetables",
+        description: "Freshly picked organic vegetables",
+        price: 30,
+        dateOfSale: new Date("2024-07-12"),
+        category: "Groceries"
+    },
+    {
+        title: "Movie Tickets",
+        description: "Tickets to the latest blockbuster movie",
+        price: 20,
+        dateOfSale: new Date("2024-07-18"),
+        category: "Entertainment"
+    },
+    {
+        title: "Gym Membership",
+        description: "Monthly gym membership",
+        price: 50,
+        dateOfSale: new Date("2024-07-22"),
+        category: "Health & Fitness"
+    },
+    {
+        title: "Dinner at Restaurant",
+        description: "Fine dining experience",
+        price: 100,
+        dateOfSale: new Date("2024-07-28"),
+        category: "Dining Out"
+    },
+    {
+        title: "Video Game",
+        description: "Popular video game for console",
+        price: 60,
+        dateOfSale: new Date("2024-07-07"),
+        category: "Entertainment"
+    }
+];
+
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/your_database_name', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+    // useNewUrlParser: true,
+    // useUnifiedTopology: true,
 })
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
@@ -140,6 +213,20 @@ app.get('/api/bar-chart', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Error fetching bar chart data' });
+    }
+});
+
+
+// Use this dummy data in your /api/initialize route
+app.get('/api/initialize', async (req, res) => {
+    try {
+        await Transaction.deleteMany({}); // Clear existing data
+        await Transaction.insertMany(dummyTransactions);
+
+        res.json({ message: 'Database initialized successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error initializing database' });
     }
 });
 
