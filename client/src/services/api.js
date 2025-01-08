@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 const api = {
-    getTransactions: async ({ month, page, search }) => {
-        const params = { month, page, search };
-        const response = await axios.get('/api/transactions', { params });
+
+    getTransactions: async () => {
+        const response = await axios.get('/api/transactions');
         return response.data;
     },
 

@@ -7,7 +7,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/transaction_db', { 
+mongoose.connect('mongodb://localhost:27017/your_database_name', { 
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -77,31 +77,20 @@ app.get('/api/initialize', async (req, res) => {
   }
 });
 
-// API to get all transactions
 app.get('/api/transactions', async (req, res) => {
   try {
     const { month, page = 1, perPage = 10, search } = req.query;
 
     const query = {};
-    if (month) {
-      query.dateOfSale = { $month: parseInt(month) };
-    }
-    if (search) {
-      const searchRegex = new RegExp(search, 'i'); // Case-insensitive search
-      query.$or = [
-        { title: { $regex: searchRegex } },
-        { description: { $regex: searchRegex } },
-      ];
-    }
 
     const options = {
-      sort: { dateOfSale: -1 }, // Sort by date in descending order
+      sort: { dateOfSale: -1 }, 
       skip: (page - 1) * perPage,
       limit: perPage,
     };
 
-    const transactions = await Transaction.find(query, null, options);
-    const total = await Transaction.countDocuments(query);
+    const transactions = await Transaction.find(query, null, options); 
+    const total = await Transaction.countDocuments(query); 
 
     res.json({
       transactions,

@@ -24,7 +24,7 @@ const TransactionsTable = ({
                         <tr key={transaction._id}>
                             <td>{transaction.title}</td>
                             <td>{transaction.description}</td>
-                            <td>${transaction.price}</td>
+                            <td>${transaction.price.toFixed(2)}</td>
                             <td>{new Date(transaction.dateOfSale).toLocaleDateString()}</td>
                             <td>{transaction.category}</td>
                         </tr>
